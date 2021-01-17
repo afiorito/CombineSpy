@@ -1,5 +1,4 @@
 import Combine
-import CombineExpectations
 @testable import CombineSpy
 import XCTest
 
@@ -21,7 +20,8 @@ final class CombineSpyTests: AssertFailureTestCase {
     }
 
     func testNext() {
-        let instantCompletionSpy = [1, 2, 3].publisher.spy()
+        let subject = PassthroughSubject<Int, Never>()
+        let instantCompletionSpy = subject.prepend([1, 2, 3]).spy()
 
         XCTAssertEqual(instantCompletionSpy.next(), 1)
         XCTAssertEqual(instantCompletionSpy.next(), 2)
@@ -31,8 +31,11 @@ final class CombineSpyTests: AssertFailureTestCase {
             XCTAssertEqual(instantCompletionSpy.next(timeout: 1), nil)
         }
 
+        subject.send(4)
+        XCTAssertEqual(instantCompletionSpy.next(), 4)
+
         let delayedCompletionSpy = [1, 2].publisher
-                    .delay(for: .milliseconds(10), scheduler: DispatchQueue.main).spy()
+            .delay(for: .milliseconds(10), scheduler: DispatchQueue.main).spy()
 
         XCTAssertEqual(delayedCompletionSpy.next(), 1)
         XCTAssertEqual(delayedCompletionSpy.next(), 2)

@@ -53,12 +53,12 @@ public class Spy<Input, Failure: Error>: Subscriber {
     ///
     /// - Returns: The  next input received by the spy.
     public func next(timeout: TimeInterval = 5) -> Input? {
-        wait(for: .input(1), timeout: timeout, description: "Waiting for next element timed out.")
-        return sync {
+        let completed = wait(for: .input(1), timeout: timeout, description: "Waiting for next element timed out.")
+        return completed ? sync {
             let index = nextIndex
             self.nextIndex += 1
             return index < capturedElements.count ? capturedElements[index] : nil
-        }
+        } : nil
     }
 
     public func receive(subscription: Subscription) {
@@ -95,7 +95,8 @@ public class Spy<Input, Failure: Error>: Subscriber {
         }
     }
 
-    private func wait(for event: ExpectationEvent, timeout: TimeInterval, description: String) {
+    @discardableResult
+    private func wait(for event: ExpectationEvent, timeout: TimeInterval, description: String) -> Bool {
         let expectation = XCTestExpectation()
         let waiter = XCTWaiter()
         let isCompleted: Bool = sync {
@@ -121,7 +122,10 @@ public class Spy<Input, Failure: Error>: Subscriber {
 
         if !isCompleted && waiter.wait(for: [expectation], timeout: timeout) != .completed {
             XCTFail(description)
+            return false
         }
+
+        return true
     }
 
     private func sync<T>(_ block: () throws -> T) rethrows -> T {

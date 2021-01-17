@@ -2,7 +2,7 @@ import XCTest
 
 /// An XTestCase subclass that can test for failures.
 open class AssertFailureTestCase: XCTestCase {
-    override public func setUpWithError() throws {
+    override open func setUpWithError() throws {
         isCapturing = false
         captures.removeAll()
     }
