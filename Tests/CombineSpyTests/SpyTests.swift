@@ -19,6 +19,21 @@ final class CombineSpyTests: AssertFailureTestCase {
         XCTAssertEqual(delayedCompletionSpy.elements(), [1, 2, 3])
     }
 
+    func testLast() {
+        let subject = PassthroughSubject<Int, Never>()
+        let instantCompletionSpy = subject.prepend([1, 2, 3]).spy()
+
+        XCTAssertEqual(instantCompletionSpy.last(), 3)
+
+        subject.send(4)
+        XCTAssertEqual(instantCompletionSpy.last(), 4)
+
+        let delayedCompletionSpy = [1, 2].publisher
+            .delay(for: .milliseconds(10), scheduler: DispatchQueue.main).spy()
+
+        XCTAssertEqual(delayedCompletionSpy.last(), 2)
+    }
+
     func testNext() {
         let subject = PassthroughSubject<Int, Never>()
         let instantCompletionSpy = subject.prepend([1, 2, 3]).spy()

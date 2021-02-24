@@ -9,6 +9,7 @@ Add Injector to your project using Swift Package Manager. In your Xcode project,
 ## Usage
 
 - [Elements](#elements)
+- [Last](#last)
 - [Next](#next)
 
 ### Elements
@@ -22,6 +23,18 @@ func testArrayPublisherCompletesWithSuccess() {
     XCTAssertEqual(spy.elements(), [1, 2, 3])
 }
 
+```
+
+### Last
+
+The `last()` method returns the last input received by the spied publisher. If no input is received before the timeout, the test fails.
+
+```swift
+// success - no failure
+func testArrayOfTwoElementsPublishesInOrder() {
+    let spy = [1, 2].publisher.spy()
+    XCTAssertEqual(spy.last(), 2)
+}
 ```
 
 ### Next

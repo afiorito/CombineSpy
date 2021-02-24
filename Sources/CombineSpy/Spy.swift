@@ -35,6 +35,29 @@ public class Spy<Input, Failure: Error>: Subscriber {
         return sync { capturedElements }
     }
 
+    /// Returns the last input received by the spy.
+    ///
+    /// If no input is received before the timeout, the test fails.
+    ///
+    /// For example:
+    ///
+    ///     // success - no failure
+    ///     func testArrayOfTwoElementsPublishesInOrder() {
+    ///         let spy = [1, 2].publisher.spy()
+    ///         XCTAssertEqual(spy.last(), 2)
+    ///     }
+    ///
+    /// - Parameters:
+    ///     - timeout: The amount of seconds within which the spied publisher must send input.
+    ///
+    /// - Returns: The  next input received by the spy.
+    public func last(timeout: TimeInterval = 5) -> Input? {
+        let completed = wait(for: .input(1), timeout: timeout, description: "Waiting for last element timed out.")
+        return completed ? sync {
+            return capturedElements.last
+        } : nil
+    }
+
     /// Returns the next input received by the spy.
     ///
     /// If no input is received before the timeout, the test fails.
@@ -46,7 +69,7 @@ public class Spy<Input, Failure: Error>: Subscriber {
     ///         let spy = [1, 2].publisher.spy()
     ///         XCTAssertEqual(spy.next(), 1)
     ///         XCTAssertEqual(spy.next(), 2)
-    ///      }
+    ///     }
     ///
     /// - Parameters:
     ///     - timeout: The amount of seconds within which the spied publisher must send input.
