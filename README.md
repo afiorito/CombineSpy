@@ -4,7 +4,7 @@ A collection of utilities that make testing Combine publishers easier.
 
 ## Installation
 
-Add Injector to your project using Swift Package Manager. In your Xcode project, select `File` > `Swift Packages` > `Add Package Dependency` and enter the repository URL.
+Add CombineSpy to your project using Swift Package Manager. In your Xcode project, select `File` > `Swift Packages` > `Add Package Dependency` and enter the repository URL.
 
 ## Usage
 
