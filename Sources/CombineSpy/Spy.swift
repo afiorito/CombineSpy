@@ -54,6 +54,7 @@ public class Spy<Input, Failure: Error>: Subscriber {
     public func last(timeout: TimeInterval = 5) -> Input? {
         let completed = wait(for: .input(1), timeout: timeout, description: "Waiting for last element timed out.")
         return completed ? sync {
+            self.nextIndex = capturedElements.count
             return capturedElements.last
         } : nil
     }
